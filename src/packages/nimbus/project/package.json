@@ -1,0 +1,15 @@
+{
+    "name": "projects",
+    "version": "1.0.0",
+    "description": "CRUD projects",
+    "license": "LicenseRef-LICENSE.md",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/niks3089/nimbella-node-project.git"
+    },
+    "main": "src/index.js",
+    "dependencies": {
+        "@nimbus/models": "file:../../../../plugins/models",
+        "@nimbus/utils": "file:../../../../plugins/utils"
+    }
+}

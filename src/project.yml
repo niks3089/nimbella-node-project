@@ -1,0 +1,29 @@
+packages:
+  - name: nimbus
+    actions:
+      - &default_action
+        environment:
+          NODE_ENV: ${NODE_ENV}
+          DB_HOST: ${DB_HOST}
+          DB_PORT: "${DB_PORT}"
+          DB_USER: ${DB_USER}
+          DB_PASS: ${DB_PASS}
+          DB_NAME: ${DB_NAME}
+          JWT_SECRET: ${JWT_SECRET}
+          API_BASE_URL: ${API_BASE_URL}
+          SUPPORT_URL: ${SUPPORT_URL}
+
+        annotations:
+          provide-api-key: true
+
+        runtime: nodejs:10
+        name: register
+
+      - <<: *default_action
+        name: login
+
+      - <<: *default_action
+        name: project
+
+      - <<: *default_action
+        name: user

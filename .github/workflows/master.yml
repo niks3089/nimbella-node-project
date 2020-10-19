@@ -1,0 +1,75 @@
+name: Workflow for master branch
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: sudo systemctl enable mysql.service
+    - run: sudo systemctl start mysql.service
+    - run: mysql -uroot -proot -e "create database nimbus;"
+    - run: npm ci
+    - run: npm run check
+    - run: npm test
+    - run: bash <(curl -s https://codecov.io/bash)
+
+    env:
+      NODE_ENV: development
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: nimbus
+      API_BASE_URL: ${{ secrets.API_LOCAL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      ADMIN_TOKEN: ${{ secrets.TEST_ADMIN_TOKEN }}
+      USER_TOKEN: ${{ secrets.TEST_USER_TOKEN }}
+      SUPPORT_URL: false
+
+  deploy:
+
+    needs: test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install -g https://apigcp.nimbella.io/downloads/nim/nimbella-cli.tgz
+    - run: npm ci
+    - run: npm run db:migrate
+    - run: npm run ci:deploy
+
+    env:
+      NODE_ENV: production
+      CI: ""
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: 3306
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DEPLOYER_LOGIN_TOKEN: ${{ secrets.DEPLOYER_LOGIN_TOKEN }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      SUPPORT_URL: ${{ secrets.SUPPORT_URL }}

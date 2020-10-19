@@ -1,0 +1,64 @@
+{
+  "name": "nimbella-node-project",
+  "version": "1.0.0",
+  "description": "Web app for nimbella node project",
+  "scripts": {
+    "start": "nodemon test/app.js",
+    "db:create": "sequelize-cli db:create --charset utf8mb4 --collate utf8mb4_general_ci",
+    "db:migrate": "sequelize-cli db:migrate",
+    "migration:create": "sequelize-cli migration:generate --name",
+    "check": "eslint '**/*.js' --ignore-pattern node_modules/ --ignore-pattern web/",
+    "lint": "eslint \"**/*.js\" --fix --ignore-pattern node_modules/ --ignore-pattern web/",
+    "deploy": "nim project deploy src --env .env --yarn",
+    "ci:deploy": "nim --version && nim auth login $DEPLOYER_LOGIN_TOKEN && npm run deploy",
+    "pretest": "npm run db:migrate && node scripts/create-data.js",
+    "test": "env NODE_ENV=test jest --coverage --runInBand --forceExit --verbose false"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niks3089/nimbella-node-project.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
+  },
+  "keywords": [
+    "side",
+    "project"
+  ],
+  "author": "Nikhil Acharya Prakash",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/niks3089/nimbella-node-project/issues"
+  },
+  "homepage": "https://github.com/niks3089/nimbella-node-project#readme",
+  "dependencies": {
+    "@nimbus/models": "file:plugins/models",
+    "@nimbus/utils": "file:plugins/utils",
+    "axios": "^0.20.0",
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.2",
+    "react-scripts": "^3.4.3",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0"
+  },
+  "devDependencies": {
+    "codecov": "^3.7.2",
+    "eslint": "^7.9.0",
+    "eslint-plugin-jest": "^24.0.1",
+    "express": "^4.17.1",
+    "husky": "^4.3.0",
+    "iconv-lite": "^0.6.2",
+    "jest": "^26.4.2",
+    "nock": "^13.0.4",
+    "nodemon": "^2.0.4",
+    "random-sentence": "^1.0.4"
+  }
+}
