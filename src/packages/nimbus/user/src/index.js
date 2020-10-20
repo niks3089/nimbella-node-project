@@ -24,6 +24,7 @@ async function getUser(args) {
     }
 
     if (user) {
+        delete user.password;
         return {
             statusCode: 200,
             body: { message: "success", data: user }

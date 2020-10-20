@@ -13,9 +13,6 @@ packages:
           API_BASE_URL: ${API_BASE_URL}
           SUPPORT_URL: ${SUPPORT_URL}
 
-        annotations:
-          provide-api-key: true
-
         runtime: nodejs:10
         name: register
 

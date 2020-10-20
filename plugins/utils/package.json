@@ -1,13 +1,11 @@
 {
   "name": "@nimbus/utils",
-  "private": true,
   "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/niks3089/nimbella-node-project.git",
     "directory": "plugins/utils"
   },
-  "license": "LicenseRef-LICENSE.md",
   "main": "src/index.js",
   "engines": {
     "node": ">= 8"
