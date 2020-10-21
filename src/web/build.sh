@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Nimbella CONFIDENTIAL
+# ---------------------
+#
+#   2018 - present Nimbella Corp
+#   All Rights Reserved.
+#
+# NOTICE:
+#
+# All information contained herein is, and remains the property of
+# Nimbella Corp and its suppliers, if any.  The intellectual and technical
+# concepts contained herein are proprietary to Nimbella Corp and its
+# suppliers and may be covered by U.S. and Foreign Patents, patents
+# in process, and are protected by trade secret or copyright law.
+#
+# Dissemination of this information or reproduction of this material
+# is strictly forbidden unless prior written permission is obtained
+# from Nimbella Corp.
+#
+
+#!/usr/bin/env bash
+
+cd nimbus-ui && npm install
+
+if [[ -e ../../../.env ]]; then
+ cp ../../../.env .env.production
+fi
+
+export PUBLIC_URL=/nimbus
+
+rm -fr build
+npm run build
