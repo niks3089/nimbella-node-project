@@ -91,7 +91,7 @@ export default function ProjectsPage(props) {
   }
 
   async function callDeleteProject(projectId) {
-    return await NimbusApi.delete('project', projectId)
+    return await NimbusApi.delete('project', {data: {id: projectId}})
       .then(response => {
         if (response.status === 200) {
           console.log(response);
