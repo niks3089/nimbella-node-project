@@ -17,15 +17,21 @@ export default function HomePage(props) {
   const [userPassword, setUserPassword] = useState("");
 
   async function callLogin() {
-    // const data = JSON.stringify({ "email": userEmail, "password": userPassword });
+    const data = { "email": userEmail, "password": userPassword };
 
-    // await NimbusApi.post('login').then(result => {
-    //   console.log(result)
-    // }).catch(error => {
-    //   console.log(error)
-    // });
-
-    props.history.push('/projects');
+    await NimbusApi.post('login', data)
+      .then(response => {
+        if (response.status === 200) {
+          props.setLoginInfoFunction(response.data.data)
+          props.history.push('/projects');
+        } else {
+          alert('Login failed')
+          console.log(response)
+        }
+      }).catch(error => {
+        alert('Login failed - catch')
+        console.log(error)
+      });
   }
 
   function handleChange(e) {
