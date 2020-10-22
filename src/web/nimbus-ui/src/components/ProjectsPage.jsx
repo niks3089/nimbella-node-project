@@ -18,47 +18,92 @@ import { Projects } from '../Style';
 import NimbusApi from '../NimbusApi';
 
 export default function ProjectsPage(props) {
-
   const classes = Projects();
+  const [loginInfo, setLoginInfo] = useState(props.loginDetails);
   const [open, setOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState(null);
   const [newProjectDescription, setNewProjectDescription] = useState(null);
-  const [projectList, setProjectList] = useState([
-    {
-      name: 'args.name',
-      description: 'args.description',
-      user: 'res.body.email'
-    }
-  ]);
-
+  const [projectList, setProjectList] = useState();
 
   useEffect(() => {
-    NimbusApi.get('project')
-      .then((response) => {
-        setProjectList([
-          {
-            id: 1,
-            name: 'args.name',
-            description: 'args.description',
-            user: 'res.body.email'
-          },
-          {
-            id: 2,
-            name: 'args.name',
-            description: 'args.description',
-            user: 'res.body.email'
-          },
-          {
-            id: 3,
-            name: 'args.name',
-            description: 'args.description',
-            user: 'res.body.email'
-          }
-        ]);
-      });
+    callFetchProject();
   }, [])
 
-  async function callLogin() {
+  async function callFetchProject() {
+    await NimbusApi.get('project')
+      .then(response => {
+        setProjectList(response.data.data);
+        // setProjectList([
+        //   {
+        //     id: 1,
+        //     name: 'args.name',
+        //     description: 'args.description',
+        //     user: 'res.body.email'
+        //   },
+        //   {
+        //     id: 2,
+        //     name: 'args.name',
+        //     description: 'args.description',
+        //     user: 'res.body.email'
+        //   },
+        //   {
+        //     id: 3,
+        //     name: 'args.name',
+        //     description: 'args.description',
+        //     user: 'res.body.email'
+        //   }
+        // ]);
+      })
+  }
+
+  async function callCreateProject() {
+    const data = { "name": newProjectName, "description": newProjectDescription };
+
+    await NimbusApi.post('project', data)
+      .then(response => {
+        if (response.status === 200) {
+          callFetchProject();
+        } else {
+          alert('failed to create project')
+          console.log(response)
+        }
+      }).catch(error => {
+        alert('failed to create project - catch')
+        console.log(error)
+      });
+  }
+
+  async function callUpdateProject(data) {
+
+    return await NimbusApi.put('project', data)
+      .then(response => {
+        if (response.status === 200) {
+          console.log(response);
+          return true;
+        } else {
+          console.log(response);
+          return false;
+        }
+      }).catch(error => {
+        console.log(error)
+        throw new Error(error.message)
+      });
+  }
+
+  async function callDeleteProject(projectId) {
+    return await NimbusApi.delete('project', {data: {id: projectId}})
+      .then(response => {
+        if (response.status === 200) {
+          console.log(response);
+          return true;
+        } else {
+          console.log(response);
+          return false;
+        }
+      }).catch(error => {
+        console.log(error)
+        throw new Error(error.message)
+      });
   }
 
   function handleChange(e) {
@@ -78,19 +123,7 @@ export default function ProjectsPage(props) {
     const { id, name, value } = e.currentTarget;
     switch (id) {
       case 'submit':
-        return callLogin();
-      case 'cancel':
-        setNewProjectName(null);
-        setNewProjectDescription(null);
-        break;
-    }
-  }
-
-  function handleDelete(e) {
-    const { id, name, value } = e.currentTarget;
-    switch (id) {
-      case 'submit':
-        return callLogin();
+        return callCreateProject();
       case 'cancel':
         setNewProjectName(null);
         setNewProjectDescription(null);
@@ -108,6 +141,7 @@ export default function ProjectsPage(props) {
     const columns = [
       { title: 'Name', field: 'name', editable: 'onUpdate' },
       { title: 'Description', field: 'description', editable: 'onUpdate' },
+      { title: 'User', field: 'user', editable: 'never' },
     ];
 
     return (
@@ -134,29 +168,42 @@ export default function ProjectsPage(props) {
               let index = oldData.tableData.id;
               dataUpdate[index] = newData;
 
-              setProjectList(dataUpdate);
-
-
-              console.log("newData");
-              console.log(newData);
-              console.log("oldData");
-              console.log(oldData);
-              console.log("dataUpdate");
-              console.log(dataUpdate);
-              resolve();
+              callUpdateProject({ id: newData.id, name: newData.name, description: newData.description })
+                .then(res => {
+                  if (res) {
+                    setProjectList(dataUpdate);
+                    resolve();
+                  } else {
+                    alert("failed to update project");
+                    reject();
+                  }
+                })
+                .catch(err => {
+                  alert("failed to update project");
+                  reject();
+                })
             }),
-          onRowDelete: oldData =>
+          onRowDelete: dataToDelete =>
             new Promise((resolve, reject) => {
-              setTimeout(() => {
-                let dataDelete = [...project];
-                let index = oldData.tableData.id;
-                dataDelete.splice(index, 1);
-                setProjectList([...dataDelete]);
+              let dataId = dataToDelete.id;
+              let dataDelete = [...project];
+              let index = dataToDelete.tableData.id;
+              dataDelete.splice(index, 1);
 
-                console.log("index")
-                console.log(index)
-                resolve()
-              }, 1000)
+              callDeleteProject(dataId)
+                .then(res => {
+                  if (res) {
+                    setProjectList([...dataDelete]);
+                    resolve()
+                  } else {
+                    alert("failed to delete data");
+                    reject();
+                  }
+                })
+                .catch(err => {
+                  alert("failed to delete data");
+                  reject();
+                });
             }),
         }}
       />
