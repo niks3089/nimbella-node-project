@@ -26,8 +26,6 @@ cd nimbus-ui
 
 IF EXIST ..\..\..\.env copy ..\..\..\.env .env.production
 
-set PUBLIC_URL=/nimbus
-
 IF EXIST build rd /S /Q build
 
 npm install && npm run build && cd ..

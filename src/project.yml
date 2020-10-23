@@ -1,3 +1,6 @@
+bucket:
+  strip: 2
+
 packages:
   - name: nimbus
     actions:
