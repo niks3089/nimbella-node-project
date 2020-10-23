@@ -20,8 +20,9 @@
 
 import axios from 'axios';
 
+//https://niks3089-9fvaw232wt1-apigcp.nimbella.io/api/nimbus/
 export default axios.create({
-  baseURL: `/nimbus/`,
+  baseURL: `/api/nimbus/`,
   withCredentials: true,
   validateStatus: false
 });

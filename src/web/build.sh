@@ -27,7 +27,5 @@ if [[ -e ../../../.env ]]; then
  cp ../../../.env .env.production
 fi
 
-export PUBLIC_URL=/nimbus
-
 rm -fr build
 npm run build
