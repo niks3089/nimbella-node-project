@@ -61,7 +61,7 @@ export default function ProjectsPage(props) {
 
     await NimbusApi.post('project', data, { headers: { token: loginInfo } })
       .then(response => {
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201) {
           callFetchProject();
         } else {
           alert('failed to create project')
@@ -91,7 +91,7 @@ export default function ProjectsPage(props) {
   }
 
   async function callDeleteProject(projectId) {
-    return await NimbusApi.delete('project', { headers: { token: loginInfo }, data: { id: projectId } })
+    return await NimbusApi.delete(`project?id=${projectId}`, { headers: { token: loginInfo } })
       .then(response => {
         if (response.status === 200) {
           console.log(response);
