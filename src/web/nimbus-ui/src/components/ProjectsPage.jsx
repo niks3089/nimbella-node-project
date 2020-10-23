@@ -30,7 +30,7 @@ export default function ProjectsPage(props) {
   }, [])
 
   async function callFetchProject() {
-    await NimbusApi.get('project')
+    await NimbusApi.get('project', { headers: { token: loginInfo } })
       .then(response => {
         setProjectList(response.data.data);
         // setProjectList([
@@ -59,7 +59,7 @@ export default function ProjectsPage(props) {
   async function callCreateProject() {
     const data = { "name": newProjectName, "description": newProjectDescription };
 
-    await NimbusApi.post('project', data)
+    await NimbusApi.post('project', data, { headers: { token: loginInfo } })
       .then(response => {
         if (response.status === 200) {
           callFetchProject();
@@ -75,7 +75,7 @@ export default function ProjectsPage(props) {
 
   async function callUpdateProject(data) {
 
-    return await NimbusApi.put('project', data)
+    return await NimbusApi.put('project', data, { headers: { token: loginInfo } })
       .then(response => {
         if (response.status === 200) {
           console.log(response);
@@ -91,7 +91,7 @@ export default function ProjectsPage(props) {
   }
 
   async function callDeleteProject(projectId) {
-    return await NimbusApi.delete('project', {data: {id: projectId}})
+    return await NimbusApi.delete('project', { headers: { token: loginInfo }, data: { id: projectId } })
       .then(response => {
         if (response.status === 200) {
           console.log(response);
