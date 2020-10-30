@@ -27,3 +27,6 @@ packages:
 
       - <<: *default_action
         name: user
+
+      - <<: *default_action
+        name: get-image-url

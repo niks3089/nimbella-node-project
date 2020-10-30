@@ -1,0 +1,11 @@
+{
+  "name": "getimageurl",
+  "version": "1.0.0",
+  "description": "Return a writable signed url to upload images",
+  "license": "LicenseRef-LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niks3089/nimbella-node-project.git"
+  },
+  "main": "index.js"
+}
