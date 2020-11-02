@@ -30,26 +30,6 @@ export default function ProjectsPage(props) {
   useEffect(() => {
     setLoginInfo(props.loginDetails);
     callFetchProject();
-    // setProjectList([
-    //   {
-    //     id: 1,
-    //     name: 'args.name',
-    //     description: 'args.description',
-    //     user: 'res.body.email',
-    //   },
-    //   {
-    //     id: 2,
-    //     name: 'args.name',
-    //     description: 'args.description',
-    //     user: 'res.body.email',
-    //   },
-    //   {
-    //     id: 3,
-    //     name: 'args.name',
-    //     description: 'args.description',
-    //     user: 'res.body.email',
-    //   }
-    // ])
   }, [])
 
   async function callFetchProject() {
@@ -136,15 +116,6 @@ export default function ProjectsPage(props) {
 
   function handleClick__Image(e) {
     handleClickOpenUploadModal();
-    // const { id, name, value } = e.currentTarget;
-    // switch (id) {
-    //   case 'submit':
-    //     return callCreateProject();
-    //   case 'cancel':
-    //     setNewProjectName(null);
-    //     setNewProjectDescription(null);
-    //     break;
-    // }
   }
 
   function handleClickOpen() {
@@ -192,7 +163,6 @@ export default function ProjectsPage(props) {
               if (statusCode === 200) {
                 return {
                   statusCode,
-                  // imageUrl: signedGetUrl
                 }
               } else {
                 return {
