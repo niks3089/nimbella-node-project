@@ -9,23 +9,12 @@ async function main(args) {
     }
     try {
         const bucket = await nim.storage(true);
-        await bucket.setMetadata({
-            cors: [{
-                origin: ['*'],
-                responseHeader: ['Content-Type', 'Cache-Control', 'Expires',
-                    'Last-Modified', 'Content-Disposition',
-                    'Access-Control-Allow-Origin', 'Cross-Domain'],
-                method: ['*'],
-                maxAgeSeconds: 3600
-            }]
-        });
-        const file = await bucket.file(args.filename);
+        const file = await bucket.file("images/" + args.filename);
         const expiration = 15 * 60 * 1000; // 15 minutes
 
         const putOptions = {
             version: 'v4',
             action: 'write',
-            contentType: 'multipart/formdata; charset=UTF-8',
             expires: Date.now() + expiration
         };
 

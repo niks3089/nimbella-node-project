@@ -142,20 +142,11 @@ export default function ProjectsPage(props) {
         .then(response => {
           if (response.status === 200) {
             const signedPutUrl = response.data.signedPutUrl[0];
-            const bucketName = response.data.bucketName;
-
-            const options = {
-              headers: {
-                'Content-Type': 'multipart/formdata; charset=UTF-8',
-                'Access-Control-Allow-Origin': '*',
-                'Cross-Domain': true
-              }
-            };
 
             axios.put(
               signedPutUrl,
               file,
-              options
+              {}
             ).then(res => {
               console.log("image put response");
               console.log(res);
