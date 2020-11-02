@@ -85,28 +85,6 @@ async function postToNimbusFunction(fn, args)
     });
 }
 
-async function postToSupport(notification)
-{
-    if (process.env.SUPPORT_URL === 'false' || !notification) {
-        return null;
-    }
-    if (notification.issue) {
-
-        return await axios.post(process.env.SUPPORT_URL, JSON.stringify({
-            "attachments": [
-            {
-                "color": "danger",
-                "text": `${process.env.__OW_ACTIVATION_ID}: ${notification.title}: ${notification.message}`
-            }]
-        }));
-    }
-    return await axios.post(process.env.SUPPORT_URL, JSON.stringify({
-            text: process.env.__OW_ACTIVATION_ID + ": " + notification.message
-    }));
-}
-
-
 module.exports.authorizeUser = authorizeUser;
 module.exports.postToNimbusFunction = postToNimbusFunction;
-module.exports.postToSupport = postToSupport;
 module.exports.logError = logError;

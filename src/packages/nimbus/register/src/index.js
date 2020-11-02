@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { Users, sequelize, Sequelize } = require('@nimbus/models');
-const { postToSupport, logError } = require('@nimbus/utils');
+const { logError } = require('@nimbus/utils');
 
 async function deleteUser(args) {
     if (!args.email) {
@@ -59,10 +59,6 @@ async function createUser(args) {
                 body: { message: "Email already registered" }
             };
         }
-        await postToSupport({
-            issue: true,
-            title: "User creation failed: ", message: e
-        });
         return {
             statusCode: 500,
             body: { message: e.message }

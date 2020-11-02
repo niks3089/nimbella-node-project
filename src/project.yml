@@ -14,7 +14,6 @@ packages:
           DB_NAME: ${DB_NAME}
           JWT_SECRET: ${JWT_SECRET}
           API_BASE_URL: ${API_BASE_URL}
-          SUPPORT_URL: ${SUPPORT_URL}
 
         runtime: nodejs:10
         name: register
