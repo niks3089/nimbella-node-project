@@ -17,3 +17,9 @@ DB_NAME=nimbus
 DEPLOYER_LOGIN_TOKEN=your namespace login token // Can be fetched with `nim auth export --non-expiring`. Only for CI/CD purpose
 JWT_SECRET=<any-random-string>
 ```
+
+## Deploy your app
+
+1. Run `npm i` to install packages
+2. Run `npm run deploy` to deploy your app to your namespace
+
