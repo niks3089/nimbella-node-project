@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import Box from '@material-ui/core/Box';
 import Card from '@material-ui/core/Card';
@@ -21,38 +22,40 @@ export default function ProjectsPage(props) {
   const classes = Projects();
   const [loginInfo, setLoginInfo] = useState(props.loginDetails);
   const [open, setOpen] = useState(false);
+  const [openUpload, setOpenUpload] = useState(false);
   const [newProjectName, setNewProjectName] = useState(null);
   const [newProjectDescription, setNewProjectDescription] = useState(null);
   const [projectList, setProjectList] = useState();
 
   useEffect(() => {
+    setLoginInfo(props.loginDetails);
     callFetchProject();
+    // setProjectList([
+    //   {
+    //     id: 1,
+    //     name: 'args.name',
+    //     description: 'args.description',
+    //     user: 'res.body.email',
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'args.name',
+    //     description: 'args.description',
+    //     user: 'res.body.email',
+    //   },
+    //   {
+    //     id: 3,
+    //     name: 'args.name',
+    //     description: 'args.description',
+    //     user: 'res.body.email',
+    //   }
+    // ])
   }, [])
 
   async function callFetchProject() {
     await NimbusApi.get('project', { headers: { token: loginInfo } })
       .then(response => {
         setProjectList(response.data.data);
-        // setProjectList([
-        //   {
-        //     id: 1,
-        //     name: 'args.name',
-        //     description: 'args.description',
-        //     user: 'res.body.email'
-        //   },
-        //   {
-        //     id: 2,
-        //     name: 'args.name',
-        //     description: 'args.description',
-        //     user: 'res.body.email'
-        //   },
-        //   {
-        //     id: 3,
-        //     name: 'args.name',
-        //     description: 'args.description',
-        //     user: 'res.body.email'
-        //   }
-        // ]);
       })
   }
 
@@ -131,8 +134,82 @@ export default function ProjectsPage(props) {
     }
   }
 
+  function handleClick__Image(e) {
+    handleClickOpenUploadModal();
+    // const { id, name, value } = e.currentTarget;
+    // switch (id) {
+    //   case 'submit':
+    //     return callCreateProject();
+    //   case 'cancel':
+    //     setNewProjectName(null);
+    //     setNewProjectDescription(null);
+    //     break;
+    // }
+  }
+
   function handleClickOpen() {
     setOpen(!open);
+  };
+
+  function handleClickOpenUploadModal() {
+    setOpenUpload(!openUpload);
+  }
+
+  function handleBrowseImages(ev) {
+    const files = ev.target.files
+    handleUpload(files);
+  }
+
+  function handleUpload(files) {
+    console.log(files)
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileName = file.name;
+      const data = { filename: fileName };
+      NimbusApi.post('get-image-url', data)
+        .then(response => {
+          if (response.status === 200) {
+            const signedPutUrl = response.data.signedPutUrl[0];
+            const bucketName = response.data.bucketName;
+
+            const options = {
+              headers: {
+                'Content-Type': 'multipart/formdata; charset=UTF-8',
+                'Access-Control-Allow-Origin': '*',
+                'Cross-Domain': true
+              }
+            };
+
+            axios.put(
+              signedPutUrl,
+              file,
+              options
+            ).then(res => {
+              console.log("image put response");
+              console.log(res);
+              const statusCode = res.status;
+              if (statusCode === 200) {
+                return {
+                  statusCode,
+                  // imageUrl: signedGetUrl
+                }
+              } else {
+                return {
+                  statusCode
+                }
+              }
+            })
+          } else {
+            alert('Failed to get signed image URL')
+            console.log(response)
+          }
+        })
+        .catch(error => {
+          alert('Login failed - catch')
+          console.log(error)
+        });
+    }
   };
 
   function ListProjects({ project }) {
@@ -142,7 +219,12 @@ export default function ProjectsPage(props) {
       { title: 'Name', field: 'name', editable: 'onUpdate' },
       { title: 'Description', field: 'description', editable: 'onUpdate' },
       { title: 'User', field: 'user', editable: 'never' },
+      { title: 'Project Image', field: 'image', editable: 'never' },
     ];
+
+    project.forEach(item => {
+      item.image = <Button variant="contained" color="primary" id="create_new_project" onClick={handleClickOpenUploadModal}>Add Image</Button>
+    });
 
     return (
       <MaterialTable
@@ -218,7 +300,7 @@ export default function ProjectsPage(props) {
           Project List
         </Typography>
 
-        <Button variant="contained" color="primary" id="create_new_project" name="netlifyToken" onClick={handleClickOpen}> Create new project </Button>
+        <Button variant="contained" color="primary" id="create_new_project" onClick={handleClickOpen}> Create new project </Button>
 
         {
           projectList && projectList.length > 0 ?
@@ -261,6 +343,23 @@ export default function ProjectsPage(props) {
             <Button variant="contained" id="cancel" className={classes.form_submit_cancel} onClick={handleClick}>Cancel</Button>
           </DialogActions>
         </Dialog>
+
+        <Dialog open={openUpload} onClose={handleClickOpenUploadModal} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Upload Image</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+            </DialogContentText>
+
+            <input type="file" name="file" accept="image/*" onChange={handleBrowseImages} multiple />
+
+            <Box m={2} />
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained" id="submit" className={classes.form_submit_submit} onClick={handleClick__Image}>Submit</Button>
+            <Button variant="contained" id="cancel" className={classes.form_submit_cancel} onClick={handleClick__Image}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+
         <Box m={4} />
       </Card>
     </div >
